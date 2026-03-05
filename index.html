@@ -388,7 +388,9 @@
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('insurance',this)">🛡 Insurance</div>
+  
+  <div class="tab active" onclick="showTab('home',this)">
+  <div class="tab" onclick="showTab('insurance',this)">🛡 Insurance</div>
   <div class="tab" onclick="showTab('scene',this)">📍 Scene</div>
   <div class="tab" onclick="showTab('vehicles',this)">🚗 Vehicles</div>
   <div class="tab" onclick="showTab('photos',this)">📷 Photos</div>
@@ -396,7 +398,55 @@
   
   <div class="tab" onclick="showTab('send',this)">📤 Send</div>
 </div>
+<!-- ══ HOME ══ -->
+<div id="tab-home" class="panel active">
+  <div class="alert alert-gold">
+    <span class="alert-icon">📝</span>
+    <div>
+      <strong>Accident Report Instructions (Company Drivers)</strong><br>
+      Use the tabs above to document the accident and send the report to the office.
+    </div>
+  </div>
 
+  <div class="card">
+    <div class="card-title">✅ What to do (in order)</div>
+    <ol style="margin:0; padding-left: 18px; line-height: 1.8;">
+      <li><strong>Checklist</strong> — make sure everyone is safe, call 911 if needed.</li>
+      <li><strong>Scene</strong> — enter location, time, police info, and what happened.</li>
+      <li><strong>Vehicles</strong> — fill in your vehicle + the other vehicle(s).</li>
+      <li><strong>Photos</strong> — take pictures of damage, plates, and the full scene.</li>
+      <li><strong>QR Code</strong> — if needed, share this form quickly with a witness/driver.</li>
+      <li><strong>Send</strong> — review the summary and submit to the office.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 Tips for drivers</div>
+    <ul class="checklist" style="margin:0;">
+      <li><span>Don’t admit fault or argue.</span></li>
+      <li><span>Get witness contact info if possible.</span></li>
+      <li><span>Take wide + close-up photos (multiple angles).</span></li>
+      <li><span>If police respond, record the report # and officer name.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">➡️ Start here</div>
+    <button class="btn btn-red btn-full" type="button"
+            onclick="showTab('checklist', document.querySelectorAll('.tab')[5])">
+      Go to Checklist (Start)
+    </button>
+
+    <div style="height:10px;"></div>
+
+    <button class="btn btn-outline btn-full" type="button"
+            onclick="showTab('insurance', document.querySelectorAll('.tab')[1])">
+      Go to Insurance (Pre-fill)
+    </button>
+
+    
+  </div>
+</div>
 <!-- ══ INSURANCE ══ -->
 <div id="tab-insurance" class="panel active">
   <div class="alert alert-red">
