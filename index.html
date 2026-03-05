@@ -1,8 +1,4 @@
-Here’s the updated HTML file with the Formspree action endpoint integrated into your vehicle accident report kit. The form will now allow users to submit their information via the specified Formspree endpoint.
 
-### Complete HTML File
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -397,7 +393,7 @@ Here’s the updated HTML file with the Formspree action endpoint integrated int
   <div class="tab" onclick="showTab('vehicles',this)">🚗 Vehicles</div>
   <div class="tab" onclick="showTab('photos',this)">📷 Photos</div>
   <div class="tab" onclick="showTab('checklist',this)">✅ Checklist</div>
-  <div class="tab" onclick="showTab('qr',this)">📱 QR Code</div>
+  
   <div class="tab" onclick="showTab('send',this)">📤 Send</div>
 </div>
 
@@ -607,40 +603,6 @@ Here’s the updated HTML file with the Formspree action endpoint integrated int
   </div>
 </div>
 
-<!-- ══ QR ══ -->
-<div id="tab-qr" class="panel">
-  <div class="card">
-    <div class="card-title">📱 Generate QR Code for This Kit</div>
-    <div class="alert alert-gold">
-      <span class="alert-icon">ℹ️</span>
-      <div>The QR code links to <strong>wherever you host this file</strong>. Upload it to Google Drive, Dropbox, or any website, then paste the public link below to generate a scannable QR code.</div>
-    </div>
-    <div class="field-wrap" style="margin-bottom:16px;">
-      <label>Paste your file's public shareable URL here</label>
-      <input type="url" id="qr-url-input" placeholder="https://drive.google.com/file/d/your-file-id/view" oninput="updateQR()">
-    </div>
-    <div class="qr-wrapper">
-      <div id="qrcode"><div style="display:flex;align-items:center;justify-content:center;height:220px;width:220px;color:#999;font-size:12px;text-align:center;font-family:sans-serif;">Enter URL above<br>to generate QR</div></div>
-      <div class="qr-url-box" id="qr-display-url">Waiting for URL…</div>
-      <button class="btn btn-red" onclick="downloadQR()">⬇️ Download QR Code</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">🔗 How to Set This Up</div>
-    <ul class="qr-steps">
-      <li><div><strong>Download this HTML file</strong> using the download link provided.</div></li>
-      <li><div><strong>Fill in your insurance info</strong> in the Insurance tab, then save the file.</div></li>
-      <li><div><strong>Upload to Google Drive / Dropbox</strong> and set sharing to "Anyone with the link can view."</div></li>
-      <li><div><strong>Copy the shareable link</strong> and paste it in the URL box above.</div></li>
-      <li><div><strong>Download the QR code image</strong> and print it — laminate it and keep it in your glove box!</div></li>
-    </ul>
-  </div>
-  <div class="card">
-    <div class="card-title">🖨 Print This Kit</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Print a paper backup copy for your glove compartment.</p>
-    <button class="btn btn-outline btn-full" onclick="window.print()">🖨 Print This Page</button>
-  </div>
-</div>
 
 <!-- ══ SEND ══ -->
 <div id="tab-send" class="panel">
