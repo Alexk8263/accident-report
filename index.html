@@ -654,4 +654,180 @@ Here’s the updated HTML file with the Formspree action endpoint integrated int
   <div class="card">
     <div class="card-title">📧 Email Report</div>
     <div class="field-group">
-      <div class="field-wrap span2"><label>Recipient Email(s)</label><input id="email_to" type="email" placeholder
+      <div class="field-wrap span2"><label>Recipient Email(s)</label><input id="email_to" type="email" placeholder="name@example.com (comma-separated if multiple)">
+      </div>
+
+      <div class="field-wrap span2">
+        <label>Your Email (so you get a copy)</label>
+        <input id="email_from" name="email" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="field-wrap span2">
+        <label>Notes (optional)</label>
+        <textarea id="email_notes" name="notes" rows="4" placeholder="Anything you want to add…"></textarea>
+      </div>
+    </div>
+
+    <!-- Send to Formspree -->
+    <form action="https://formspree.io/f/xreyzrjo" method="POST" onsubmit="prepareFormspreePayload()">
+      <input type="hidden" name="_subject" value="Accident Report Submission">
+      <input type="hidden" id="formspree_summary" name="report_summary" value="">
+      <button type="submit" class="btn btn-red btn-full">Send Report</button>
+    </form>
+
+    <div style="height:10px;"></div>
+    <button class="btn btn-outline btn-full" onclick="generateSummary()">Generate / Refresh Summary</button>
+  </div>
+</div>
+
+<script>
+  // --- Tabs ---
+  function showTab(name, el) {
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    const panel = document.getElementById("tab-" + name);
+    if (panel) panel.classList.add("active");
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    if (el) el.classList.add("active");
+  }
+
+  // --- Checklist strike-through ---
+  function toggleCheck(cb) {
+    const li = cb.closest("li");
+    if (!li) return;
+    if (cb.checked) li.classList.add("checked");
+    else li.classList.remove("checked");
+  }
+
+  // --- Witnesses ---
+  let witnessCount = 0;
+  function addWitness() {
+    witnessCount++;
+    const container = document.getElementById("witnesses-container");
+    if (!container) return;
+
+    const div = document.createElement("div");
+    div.className = "witness-entry";
+    div.innerHTML = `
+      <button class="remove-witness" type="button" onclick="this.parentElement.remove()">×</button>
+      <div class="field-group">
+        <div class="field-wrap"><label>Name</label><input name="witness_${witnessCount}_name" type="text"></div>
+        <div class="field-wrap"><label>Phone</label><input name="witness_${witnessCount}_phone" type="tel"></div>
+        <div class="field-wrap span2"><label>Statement</label><textarea name="witness_${witnessCount}_statement" rows="3"></textarea></div>
+      </div>
+    `;
+    container.appendChild(div);
+  }
+
+  // --- Vehicles (extra) ---
+  let vehicleCount = 1;
+  function addVehicle() {
+    vehicleCount++;
+    const container = document.getElementById("extra-vehicles");
+    if (!container) return;
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-title">🚙 Other Vehicle #${vehicleCount}</div>
+      <div class="field-group">
+        <div class="field-wrap"><label>Driver Name</label><input name="ov${vehicleCount}_name" type="text"></div>
+        <div class="field-wrap"><label>Phone</label><input name="ov${vehicleCount}_phone" type="tel"></div>
+        <div class="field-wrap"><label>Driver License #</label><input name="ov${vehicleCount}_dl" type="text"></div>
+        <div class="field-wrap"><label>State</label><input name="ov${vehicleCount}_state" type="text"></div>
+        <div class="field-wrap span2"><label>Address</label><input name="ov${vehicleCount}_address" type="text"></div>
+        <div class="field-wrap"><label>Year / Make / Model</label><input name="ov${vehicleCount}_vehicle" type="text"></div>
+        <div class="field-wrap"><label>Color</label><input name="ov${vehicleCount}_color" type="text"></div>
+        <div class="field-wrap"><label>License Plate</label><input name="ov${vehicleCount}_plate" type="text"></div>
+        <div class="field-wrap"><label>VIN</label><input name="ov${vehicleCount}_vin" type="text"></div>
+        <div class="field-wrap"><label>Insurance Company</label><input name="ov${vehicleCount}_ins" type="text"></div>
+        <div class="field-wrap"><label>Their Policy Number</label><input name="ov${vehicleCount}_policy" type="text"></div>
+        <div class="field-wrap"><label>Their Claims Number</label><input name="ov${vehicleCount}_claims" type="tel"></div>
+        <div class="field-wrap span2"><label>Damage Description</label><textarea name="ov${vehicleCount}_damage" rows="3"></textarea></div>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+
+  // --- Photos preview (local only) ---
+  function handlePhotos(files) {
+    const grid = document.getElementById("photo-grid");
+    const countEl = document.getElementById("photo-count");
+    if (!grid) return;
+
+    Array.from(files).forEach(file => {
+      const url = URL.createObjectURL(file);
+      const wrap = document.createElement("div");
+      wrap.className = "photo-thumb";
+      wrap.innerHTML = `
+        <img src="${url}" alt="photo">
+        <button class="remove-btn" type="button">×</button>
+      `;
+      wrap.querySelector(".remove-btn").onclick = () => wrap.remove();
+      grid.appendChild(wrap);
+    });
+
+    if (countEl) countEl.textContent = `${grid.children.length} photo(s) added (photos are not uploaded unless you build an upload flow).`;
+  }
+
+  // --- QR ---
+  let qr;
+  function updateQR() {
+    const input = document.getElementById("qr-url-input");
+    const box = document.getElementById("qrcode");
+    const display = document.getElementById("qr-display-url");
+    if (!input || !box || !display) return;
+
+    const url = input.value.trim();
+    display.textContent = url ? url : "Waiting for URL…";
+
+    box.innerHTML = "";
+    if (!url) {
+      box.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:220px;width:220px;color:#999;font-size:12px;text-align:center;font-family:sans-serif;">Enter URL above<br>to generate QR</div>';
+      return;
+    }
+    qr = new QRCode(box, { text: url, width: 220, height: 220 });
+  }
+
+  function downloadQR() {
+    const box = document.getElementById("qrcode");
+    if (!box) return;
+    const img = box.querySelector("img");
+    const canvas = box.querySelector("canvas");
+    const src = img ? img.src : (canvas ? canvas.toDataURL("image/png") : null);
+    if (!src) return;
+
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = "accident-report-qr.png";
+    a.click();
+  }
+
+  // --- Summary + send ---
+  function generateSummary() {
+    const fields = document.querySelectorAll("input, textarea, select");
+    let lines = [];
+    fields.forEach(f => {
+      // skip file inputs
+      if (f.type === "file") return;
+      const id = f.id || f.name;
+      const val = (f.value || "").trim();
+      if (id && val) lines.push(`${id}: ${val}`);
+    });
+
+    const summary = lines.join("\n");
+    const box = document.getElementById("report-summary");
+    if (box) box.textContent = summary || 'No data yet. Fill fields, then click "Generate / Refresh Summary".';
+  }
+
+  function prepareFormspreePayload() {
+    // ensure summary is up-to-date
+    generateSummary();
+    const box = document.getElementById("report-summary");
+    const hidden = document.getElementById("formspree_summary");
+    if (hidden && box) hidden.value = box.textContent || "";
+  }
+</script>
+
+</body>
+</html>
